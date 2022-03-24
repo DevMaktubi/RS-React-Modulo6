@@ -70,7 +70,10 @@
                 "allowExpressions": true
             }
         ],
-        "@typescript-eslint/camelcase": "off"
+        "@typescript-eslint/camelcase": "off",
+        "react/function-component-definition": "off",
+        "no-console": "off",
+        "no-unused-vars": "off"
     },
     "settings": {
         "react": {
