@@ -75,7 +75,8 @@
         "no-console": "off",
         "no-unused-vars": "off",
         "no-shadow": "off",
-        "no-nested-ternary": "off"
+        "no-nested-ternary": "off",
+        "func-names": "off"
     },
     "settings": {
         "react": {
