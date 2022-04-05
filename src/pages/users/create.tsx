@@ -13,9 +13,14 @@ import { ReactElement } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
+import { useRouter } from 'next/router';
+
 import { Input } from '../../components/Form/Input';
 import { Header } from '../../components/Header';
 import { Sidebar } from '../../components/Sidebar';
+import { api } from '../../services/api';
+import { queryClient } from '../../services/queryClient';
 
 interface CreateUserFormData {
   name: string;
@@ -37,6 +42,25 @@ const CreateUserSchema = yup.object().shape({
 });
 
 export default function CreateUser(): ReactElement {
+  const router = useRouter();
+  const createUser = useMutation(
+    async (user: CreateUserFormData) => {
+      const response = await api.post('users', {
+        user: {
+          ...user,
+          created_at: new Date(),
+        },
+      });
+
+      return response.data.user;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('users');
+      },
+    }
+  );
+
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(CreateUserSchema),
   });
@@ -44,10 +68,9 @@ export default function CreateUser(): ReactElement {
   const handleCreateUser: SubmitHandler<CreateUserFormData> = async (
     data
   ): Promise<void> => {
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await createUser.mutateAsync(data);
 
-    console.log(data);
+    router.push('/users');
   };
 
   const { errors } = formState;
